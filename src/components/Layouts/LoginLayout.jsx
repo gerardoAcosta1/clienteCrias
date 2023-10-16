@@ -1,18 +1,21 @@
 import { useForm } from 'react-hook-form'
 import '../../styles/Layouts/LoginLayout.css'
 import useFetch from '../../hooks/useFetch'
+import { useEffect } from 'react'
 
 const LoginLayout = ({notice}) => {
 
     const { register, reset, handleSubmit } = useForm()
-
+   
     
-    const {loginUser} = useFetch();
-
-    const submit = data => {
+    const {loginUser, allCowsByDB, cows} = useFetch();
+    useEffect(()=> {
+        allCowsByDB()
+    },[])
+    const submit = async data => {
         
-         loginUser(data);
-       
+         await loginUser(data);
+        notice('usuario logueado', 'green')
         reset({
             username: '',
             password: '',
@@ -37,8 +40,10 @@ const LoginLayout = ({notice}) => {
                         <input className="input__register"{...register('password')} type="password" id="password" />
                     </div>
                     <button className="button__register">Login</button>
+                   
                 </div>
             </form>
+            <h4 className={`${cows ? 'conected' : 'disconected'}`}>{cows.length != 0 ? 'conected' : 'Disconnected'}</h4>
         </div>
     )
 }

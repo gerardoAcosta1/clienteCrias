@@ -7,9 +7,9 @@ const useFetch = () => {
     const [cows, setCows] = useState([]);
     const [cowsCuarenta, setCowsCuarenta] = useState([])
     const navigate = useNavigate();
+    
     //const cowsLocale = JSON.parse(localStorage.getItem('cow')) || [];
-
-
+    //se desarrolló lógica para adaptarlo a local
 
     const loginUser = (data) => {
         axios
@@ -28,7 +28,7 @@ const useFetch = () => {
                 console.log(err)
             })
         if (data.username) {
-
+            
         }
     }
     const allCows = () => {

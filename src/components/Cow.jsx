@@ -1,14 +1,10 @@
-import React, { useEffect, useState } from 'react';
 import '../styles/cow.css';
-import useFetch from '../hooks/useFetch';
 
-const Cow = ({ cow, notice, visibleForm, setVisibleForm, setVisibleFrecForm, setUpdateInfo, deleteW, update, eliminarRegistro, addCowQuarantine }) => {
-
+const Cow = ({ cow, notice, visibleForm, setVisibleForm, setVisibleFrecForm, setUpdateInfo, deleteW, update, addCowQuarantine }) => {
 
     const username = localStorage.getItem('user');
 
     const tipos = (cow) => {
-
 
         const peso = parseInt(cow?.peso);
         const musculo = parseInt(cow?.musculo);
@@ -81,6 +77,7 @@ const Cow = ({ cow, notice, visibleForm, setVisibleForm, setVisibleFrecForm, set
             notice('Usuario no autorizado para esta acción');
         }
     };
+
     const handleAddQuarantine = async (cow) => {
         if(username != 'ayudante'){
             await addCowQuarantine(cow)
@@ -88,9 +85,7 @@ const Cow = ({ cow, notice, visibleForm, setVisibleForm, setVisibleFrecForm, set
         }else{
             notice('Usuario no autorizado para esta acción')
         }
-     
     }
-
 
     return (
         <div className={`cows `}>

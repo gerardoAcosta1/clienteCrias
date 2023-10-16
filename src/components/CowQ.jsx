@@ -2,13 +2,11 @@ import React, { useEffect, useState } from 'react';
 import '../styles/cow.css';
 
 
-const CowQ = ({ cow, notice, visibleForm, setVisibleForm, setVisibleFrecForm, setUpdateInfo, deleteW, update, eliminarRegistro, deleteCowQuarantine }) => {
-
+const CowQ = ({ cow, notice, visibleForm, setVisibleForm, setVisibleFrecForm, setUpdateInfo, deleteW, update, deleteCowQuarantine }) => {
 
     const username = localStorage.getItem('user');
 
     const tipos = (cow) => {
-
 
         const peso = parseInt(cow?.peso);
         const musculo = parseInt(cow?.musculo);
@@ -88,10 +86,7 @@ const CowQ = ({ cow, notice, visibleForm, setVisibleForm, setVisibleFrecForm, se
         }else{
             notice('No tienes permisos para realizar esta accion')
         }
-       
     }
-
-
     return (
         <div className={`cows `}>
             <ul className={`list__cows `}>

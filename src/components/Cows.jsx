@@ -52,8 +52,6 @@ const Cows = ({ notice }) => {
         setLoading(true)
     }, [])
 
-
-
     //----------function's------------------------------
     const cleanNewCow = () => {
         if (username !== 'ayudante') {
@@ -169,7 +167,6 @@ const Cows = ({ notice }) => {
         localStorage.removeItem("home")
         navigate('/')
     }
-
 
     //-----------return------------------------------
 
