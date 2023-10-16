@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useFetch from "../hooks/useFetch"
 import Cow from "./Cow";
-import CowQ from "./CowQ.JSX";
+import CowQ from "./CowQ";
 import '../styles/cows.css'
 import { useForm } from "react-hook-form";
 import FormCows from "./FormCows";
