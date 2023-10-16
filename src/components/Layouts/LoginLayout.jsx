@@ -3,19 +3,21 @@ import '../../styles/Layouts/LoginLayout.css'
 import useFetch from '../../hooks/useFetch'
 import { useEffect } from 'react'
 
-const LoginLayout = ({notice}) => {
+const LoginLayout = ({ notice }) => {
 
     const { register, reset, handleSubmit } = useForm()
-   
-    
-    const {loginUser, allCowsByDB, cows} = useFetch();
-    useEffect(()=> {
+
+    const { loginUser, allCowsByDB, cows } = useFetch();
+
+    useEffect(() => {
         allCowsByDB()
-    },[])
+    }, [])
+
     const submit = async data => {
-        
-         await loginUser(data);
+
+        await loginUser(data);
         notice('usuario logueado', 'green')
+        
         reset({
             username: '',
             password: '',
@@ -23,7 +25,7 @@ const LoginLayout = ({notice}) => {
     }
 
     return (
-        
+
         <div className="main__login">
             <form onSubmit={handleSubmit(submit)}>
                 <div className="container__title__register">
@@ -40,7 +42,6 @@ const LoginLayout = ({notice}) => {
                         <input className="input__register"{...register('password')} type="password" id="password" />
                     </div>
                     <button className="button__register">Login</button>
-                   
                 </div>
             </form>
             <h4 className={`${cows ? 'conected' : 'disconected'}`}>{cows.length != 0 ? 'conected' : 'Disconnected'}</h4>

@@ -33,15 +33,12 @@ function App() {
         /> : ''
        }
       <Routes>
-        
         <Route path="/" element={<HomePage 
           notice={notice}
-        
         />} />
           <Route element={<ProtectedRoutes />}>
             <Route path="/cows" element={<CowsPage
               notice={notice}
-            
             />} />
           </Route>
       </Routes>
