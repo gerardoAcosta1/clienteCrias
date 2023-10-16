@@ -9,6 +9,8 @@
     align-items: center;
 
     user-select: none;
+
+    
 }
 .container__cows {
 
@@ -22,7 +24,7 @@
 
     align-items: center;
     
-    
+   
 }
 .title__cows {
 
@@ -45,6 +47,7 @@
 .container__buttons{
     width: 100%;
     display: flex;
+    
 }
 .logout {
     
@@ -116,8 +119,7 @@
     height: max-content;
 
     padding: 12px;
-    margin-top: 70px;
-
+    margin-top: 20%;
     position: absolute;
     z-index: 3;
     
