@@ -83,7 +83,7 @@ const Cows = ({ notice }) => {
             fr: parseInt(cowQ?.fr) || null,
             fs: parseInt(cowQ?.fs) || null
         });
-        }
+        }else{
         reset({
 
             peso: parseInt(cowUpdate?.peso) || null,
@@ -94,7 +94,7 @@ const Cows = ({ notice }) => {
             fr: parseInt(cowUpdate?.fr) || null,
             fs: parseInt(cowUpdate?.fs) || null
         });
-
+    }
         setLoading(true)
 
     }
