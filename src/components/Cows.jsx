@@ -75,13 +75,13 @@ const Cows = ({ notice }) => {
 
         reset({
 
-            peso: parseInt(cowUpdate.peso) || null,
-            musculo: parseInt(cowUpdate.musculo) || null,
-            marmoleo: parseInt(cowUpdate.marmoleo) || null,
-            temp: parseFloat(cowUpdate.temp) || null,
-            fc: parseInt(cowUpdate.fc) || null,
-            fr: parseInt(cowUpdate.fr) || null,
-            fs: parseInt(cowUpdate.fs) || null
+            peso: parseInt(cowUpdate?.peso) || null,
+            musculo: parseInt(cowUpdate?.musculo) || null,
+            marmoleo: parseInt(cowUpdate?.marmoleo) || null,
+            temp: parseFloat(cowUpdate?.temp) || null,
+            fc: parseInt(cowUpdate?.fc) || null,
+            fr: parseInt(cowUpdate?.fr) || null,
+            fs: parseInt(cowUpdate?.fs) || null
         });
 
         setLoading(true)
