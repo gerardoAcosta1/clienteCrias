@@ -72,7 +72,18 @@ const Cows = ({ notice }) => {
 
         setLoading(false)
         const cowUpdate = cows.find(cow => cow.id == id)
-
+        const cowQ = cowsCuarenta.find(cow => cow.id == id)
+        if(cowQ){
+            reset({
+            peso: parseInt(cowQ?.peso) || null,
+            musculo: parseInt(cowQ?.musculo) || null,
+            marmoleo: parseInt(cowQ?.marmoleo) || null,
+            temp: parseFloat(cowQ?.temp) || null,
+            fc: parseInt(cowQ?.fc) || null,
+            fr: parseInt(cowQ?.fr) || null,
+            fs: parseInt(cowQ?.fs) || null
+        });
+        }
         reset({
 
             peso: parseInt(cowUpdate?.peso) || null,
