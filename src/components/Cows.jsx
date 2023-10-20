@@ -19,14 +19,14 @@ const Cows = ({ notice }) => {
     sistemas
     */
 
-    const { 
+    const {
         cows,
         allCowsByDB,
         cowsCuarenta,
         addCowByDB,
         updateCowByDB,
         deleteCowByDB,
-        addCowQuarantine, 
+        addCowQuarantine,
         deleteCowQuarantine
     } = useFetch();
 
@@ -73,38 +73,41 @@ const Cows = ({ notice }) => {
         setLoading(false)
         const cowUpdate = cows.find(cow => cow.id == id)
         const cowQ = cowsCuarenta.find(cow => cow.id == id)
-        if(cowQ){
+        if (cowQ) {
             reset({
-            peso: parseInt(cowQ?.peso) || null,
-            musculo: parseInt(cowQ?.musculo) || null,
-            marmoleo: parseInt(cowQ?.marmoleo) || null,
-            temp: parseFloat(cowQ?.temp) || null,
-            fc: parseInt(cowQ?.fc) || null,
-            fr: parseInt(cowQ?.fr) || null,
-            fs: parseInt(cowQ?.fs) || null
-        });
-        }else{
-        reset({
+                peso: parseInt(cowQ?.peso) || null,
+                musculo: parseInt(cowQ?.musculo) || null,
+                marmoleo: parseInt(cowQ?.marmoleo) || null,
+                temp: parseFloat(cowQ?.temp) || null,
+                fc: parseInt(cowQ?.fc) || null,
+                fr: parseInt(cowQ?.fr) || null,
+                fs: parseInt(cowQ?.fs) || null
+            });
+        } else {
+            reset({
 
-            peso: parseInt(cowUpdate?.peso) || null,
-            musculo: parseInt(cowUpdate?.musculo) || null,
-            marmoleo: parseInt(cowUpdate?.marmoleo) || null,
-            temp: parseFloat(cowUpdate?.temp) || null,
-            fc: parseInt(cowUpdate?.fc) || null,
-            fr: parseInt(cowUpdate?.fr) || null,
-            fs: parseInt(cowUpdate?.fs) || null
-        });
-    }
+                peso: parseInt(cowUpdate?.peso) || null,
+                musculo: parseInt(cowUpdate?.musculo) || null,
+                marmoleo: parseInt(cowUpdate?.marmoleo) || null,
+                temp: parseFloat(cowUpdate?.temp) || null,
+                fc: parseInt(cowUpdate?.fc) || null,
+                fr: parseInt(cowUpdate?.fr) || null,
+                fs: parseInt(cowUpdate?.fs) || null
+            });
+        }
         setLoading(true)
 
     }
 
-    const deleteW = id => {
+    const deleteW = async id => {
 
         if (username != 'ayudante') {
 
             setLoading(false)
-            if (deleteCowByDB(id)) {
+            await deleteCowQuarantine(id)
+            const delet = await deleteCowByDB(id);
+        
+            if (delet) {
                 notice(`Se ha eliminado el registro ${id}, con éxito`, "green");
             }
             setLoading(true)
@@ -117,6 +120,7 @@ const Cows = ({ notice }) => {
     const submit = async data => {
 
         const parseData = {
+
             peso: parseInt(data.peso),
             musculo: parseInt(data.musculo),
             marmoleo: parseInt(data.marmoleo),
@@ -125,12 +129,32 @@ const Cows = ({ notice }) => {
             fr: parseInt(data.fr),
             fs: parseInt(data.fs)
         }
+        const parseData2 = {
+
+            peso: parseInt(data.peso),
+            musculo: parseInt(data.musculo),
+            marmoleo: parseInt(data.marmoleo),
+            temp: null,
+            fc: null,
+            fr: null,
+            fs: null
+        }
 
         setLoading(false)
-
+        setVisibleForm(false)
+        setVisibleFrecForm(false)
+        
         if (updateInfo) {
-
-            const updatedCow = updateCowByDB(updateInfo, parseData);
+            setTimeout(() => {
+                
+                if(loading){
+                    setLoading(true)
+                    notice('hubo un problema al actualizar el registro')
+                }
+            }, 3000);
+            const updatedCow = await updateCowByDB(updateInfo, parseData);
+            console.log(updatedCow)
+           
 
             if (updatedCow) {
                 notice('Registro actualizado', "green");
@@ -146,13 +170,9 @@ const Cows = ({ notice }) => {
                 notice('Registro agregado con éxito', "green")
                 allCowsByDB()
             } else {
-                notice("Error al ingresar registro", "red")
+                notice("Error al ingresar registro")
             }
         }
-
-        setVisibleForm(false)
-        setVisibleFrecForm(false)
-
         reset({
             peso: null,
             musculo: null,

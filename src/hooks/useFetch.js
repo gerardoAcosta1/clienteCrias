@@ -20,7 +20,7 @@ const useFetch = () => {
                         localStorage.setItem('user', res.data.username);
                         localStorage.setItem('home', 'pass');
                         navigate('/cows');
-
+                        return res.data
                     }
                 }
             })
@@ -45,7 +45,7 @@ const allCowsQuarantine = () => {
             })
             .catch(err => console.log(err))
         });
-} 
+}; 
     const allCowsByDB = () => {
         return new Promise((resolve, reject) => {
         axios
@@ -75,7 +75,7 @@ const deleteCowQuarantine = cow => {
     console.log(cow)
     return new Promise((resolve, reject) => {
     axios
-        .delete(`https://karratha-platypus-cfrm.2.sg-1.fl0.io/quarantine/${cow.id}`, cow)
+        .delete(`https://karratha-platypus-cfrm.2.sg-1.fl0.io/quarantine/${cow.id || cow}`, cow)
         .then((res) => {
           
             
@@ -140,6 +140,7 @@ const deleteCowQuarantine = cow => {
                     resolve(res.data); 
                 })
                 .catch(err => {
+                    console.log(err)
                     reject(new Error('Error al actualizar el registro en la base de datos'));
                 });
         });
@@ -164,11 +165,12 @@ const deleteCowQuarantine = cow => {
   
     const deleteCowByDB = async (id) => {
         try {
-          const response = await axios.delete(`https://karratha-platypus-cfrm.2.sg-1.fl0.io/cows/${id}`);
+          const response = await axios.delete(`https://karratha-platypus-cfrm.2.sg-1.fl0.io/cows/${id}/`);
           await allCowsByDB();
           console.log(response.data);
           return response.data;
         } catch (error) {
+            console.log(error)
           throw new Error('Error al eliminar el registro en la base de datos');
         }
       };

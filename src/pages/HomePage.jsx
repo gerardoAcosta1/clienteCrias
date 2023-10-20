@@ -1,6 +1,5 @@
 import '../App.css'
 import LoginLayout from "../components/Layouts/LoginLayout"
-import useFetch from '../hooks/useFetch'
 
 const HomePage = ({ notice }) => {
     

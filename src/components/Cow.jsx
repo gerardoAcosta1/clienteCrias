@@ -52,7 +52,6 @@ const Cow = ({ cow, notice, visibleForm, setVisibleForm, setVisibleFrecForm, set
             (fcValue < 70 || fcValue > 80) ||
             (frValue < 15 || frValue > 20) ||
             (fsValue < 8 || fsValue > 10)
-
         ) {
             return { resultado: 'mala', isSpecial: true };
         }

@@ -109,7 +109,7 @@
 }
 .loading {
 
-    z-index: 5;
+    z-index: 10;
 }
 .form__container {
 
@@ -121,7 +121,7 @@
     padding: 12px;
     margin-top: 20%;
     position: absolute;
-    z-index: 3;
+  
     
 
     display: flex;
