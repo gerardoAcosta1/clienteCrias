@@ -143,7 +143,7 @@ const CowQ = ({ cow, notice, setUpdateInfo, deleteW, update, clientApi }) => {
             <i className='bx bx-edit' onClick={() => handleEdit(cow?.id)}></i>
             <i className='bx bx-trash' onClick={() => deleteW(cow?.id)}></i>
             <i className='bx bx-add-to-queue' onClick={() => handleEditFrec(cow?.id)}></i>
-            <i className='bx bx-horizontal-right' onClick={() => handleDeleteQuarantine(cow)}>Cuarentena</i>
+            <i className='bx bx-horizontal-right' onClick={() => handleDeleteQuarantine(cow)}>delQuarantine</i>
         </div>
     );
 };
