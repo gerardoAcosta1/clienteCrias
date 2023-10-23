@@ -1,7 +1,7 @@
 import '../styles/cow.css';
 
 
-const CowQ = ({ cow, notice, visibleForm, setVisibleForm, setVisibleFrecForm, setUpdateInfo, deleteW, update, deleteCowQuarantine }) => {
+const CowQ = ({ cow, notice, setUpdateInfo, deleteW, update, clientApi }) => {
 
     const username = localStorage.getItem('user');
 
@@ -61,7 +61,6 @@ const CowQ = ({ cow, notice, visibleForm, setVisibleForm, setVisibleFrecForm, se
 
     const handleEdit = (id) => {
         if (username !== 'ayudante') {
-            setVisibleForm(!visibleForm);
             setUpdateInfo(id);
             update(id);
         } else {
@@ -71,7 +70,6 @@ const CowQ = ({ cow, notice, visibleForm, setVisibleForm, setVisibleFrecForm, se
 
     const handleEditFrec = (id) => {
         if (username === 'ayudante') {
-            setVisibleFrecForm(true);
             setUpdateInfo(id);
             update(id);
         } else {
@@ -80,7 +78,7 @@ const CowQ = ({ cow, notice, visibleForm, setVisibleForm, setVisibleFrecForm, se
     };
     const handleDeleteQuarantine = async () => {
         if(username != 'ayudante'){
-            await deleteCowQuarantine(cow)
+            await clientApi.deleteCowQuarantine(cow.id)
             notice('se eliminó de cuarentena', 'green')
         }else{
             notice('No tienes permisos para realizar esta accion')

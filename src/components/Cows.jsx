@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import useFetch from "../hooks/useFetch"
+import CleanParse from "../utils/cleanParse";
 import Cow from "./Cow";
 import CowQ from "./CowQ";
 import '../styles/cows.css'
@@ -21,13 +22,8 @@ const Cows = ({ notice }) => {
 
     const {
         cows,
-        allCowsByDB,
         cowsCuarenta,
-        addCowByDB,
-        updateCowByDB,
-        deleteCowByDB,
-        addCowQuarantine,
-        deleteCowQuarantine
+        clientApi
     } = useFetch();
 
     const [visibleForm, setVisibleForm] = useState(false)
@@ -41,28 +37,23 @@ const Cows = ({ notice }) => {
 
     const username = localStorage.getItem('user');
 
+    const cleaner1 = new CleanParse();
+
     //---------------------useEfect's---------------------------------------------
 
     useEffect(() => {
 
-        setLoading(false)
-
-        allCowsByDB()
-
+       clientApi.allCowsByDB()
         setLoading(true)
     }, [])
 
-    //----------function's------------------------------
+    //------------ Functions -------------------------------------------
+
     const cleanNewCow = () => {
+
         if (username !== 'ayudante') {
-
-            reset({
-                peso: 0,
-                musculo: 0,
-                marmoleo: 0,
-            });
-
             setVisibleForm(!visibleForm)
+            cleaner1.reset(reset)
         } else {
             notice('No está autorizado para ejecutar esta acción')
         }
@@ -70,130 +61,80 @@ const Cows = ({ notice }) => {
 
     const update = (id) => {
 
-        setLoading(false)
-        const cowUpdate = cows.find(cow => cow.id == id)
-        const cowQ = cowsCuarenta.find(cow => cow.id == id)
-        if (cowQ) {
-            reset({
-                peso: parseInt(cowQ?.peso) || null,
-                musculo: parseInt(cowQ?.musculo) || null,
-                marmoleo: parseInt(cowQ?.marmoleo) || null,
-                temp: parseFloat(cowQ?.temp) || null,
-                fc: parseInt(cowQ?.fc) || null,
-                fr: parseInt(cowQ?.fr) || null,
-                fs: parseInt(cowQ?.fs) || null
-            });
-        } else {
-            reset({
-
-                peso: parseInt(cowUpdate?.peso) || null,
-                musculo: parseInt(cowUpdate?.musculo) || null,
-                marmoleo: parseInt(cowUpdate?.marmoleo) || null,
-                temp: parseFloat(cowUpdate?.temp) || null,
-                fc: parseInt(cowUpdate?.fc) || null,
-                fr: parseInt(cowUpdate?.fr) || null,
-                fs: parseInt(cowUpdate?.fs) || null
-            });
-        }
-        setLoading(true)
-
+        const cleaner2 = new CleanParse(id, cows, cowsCuarenta)
+        cleaner2.update(reset);
+        setVisibleForm(!visibleForm)
     }
 
     const deleteW = async id => {
 
         if (username != 'ayudante') {
-
             setLoading(false)
-            await deleteCowQuarantine(id)
-            const delet = await deleteCowByDB(id);
-        
-            if (delet) {
-                notice(`Se ha eliminado el registro ${id}, con éxito`, "green");
-            }
+            //await deleteCowQuarantine(id)
+            await clientApi.deleteCowByDB(id);
+            notice(`Se ha eliminado el registro ${id}, con éxito`, "green");
             setLoading(true)
+
         } else {
             notice('No está autorizado para ejecutar esta acción, comuníquese a Sistemas')
         }
-
-    }
+    };
 
     const submit = async data => {
-
-        const parseData = {
-
-            peso: parseInt(data.peso),
-            musculo: parseInt(data.musculo),
-            marmoleo: parseInt(data.marmoleo),
-            temp: parseFloat(data.temp),
-            fc: parseInt(data.fc),
-            fr: parseInt(data.fr),
-            fs: parseInt(data.fs)
-        }
-        const parseData2 = {
-
-            peso: parseInt(data.peso),
-            musculo: parseInt(data.musculo),
-            marmoleo: parseInt(data.marmoleo),
-            temp: null,
-            fc: null,
-            fr: null,
-            fs: null
-        }
 
         setLoading(false)
         setVisibleForm(false)
         setVisibleFrecForm(false)
-        
-        if (updateInfo) {
-            setTimeout(() => {
-                
-                if(loading){
-                    setLoading(true)
-                    notice('hubo un problema al actualizar el registro')
+
+        const uno = cleaner1.parser(data);
+
+        const handleDatabaseOperation = async () => {
+            let message = '';
+            try {
+                let operationPromise;
+                if (updateInfo) {
+                    operationPromise = clientApi.updateCowByDB(updateInfo, uno.parseData);
+                    message = 'Registro actualizado';
+                } else {
+                    operationPromise = clientApi.addCowByDB(uno.parseData2);
+                    message = 'Registro agregado con éxito';
                 }
-            }, 3000);
-            const updatedCow = await updateCowByDB(updateInfo, parseData);
-            console.log(updatedCow)
-           
-
-            if (updatedCow) {
-                notice('Registro actualizado', "green");
-                allCowsByDB();
-                setUpdateInfo();
-            } else {
-                notice('Error al actualizar el registro');
+        
+                const result = await Promise.race([
+                    operationPromise,
+                    new Promise((resolve) => setTimeout(resolve, 4000)),
+                ]);
+        
+                if (result === 'timeout') {
+                    setLoading(true);
+                    notice('La operación de la base de datos está tardando mucho');
+                } else if (result) { // Verifica si la operación fue exitosa
+                    setLoading(true);
+                    notice(message, 'green');
+                    setUpdateInfo();
+                } else {
+                    setLoading(true);
+                    notice('Error al realizar la operación');
+                }
+            } catch (error) {
+                setLoading(true);
+                notice('Error al ejecutar la operación en la base de datos: ' + error);
             }
-
-        } else {
-
-            if (await addCowByDB(parseData)) {
-                notice('Registro agregado con éxito', "green")
-                allCowsByDB()
-            } else {
-                notice("Error al ingresar registro")
-            }
-        }
-        reset({
-            peso: null,
-            musculo: null,
-            marmoleo: null,
-        });
-
-        setLoading(true)
+        };
+        handleDatabaseOperation();
+        cleaner1.reset(reset);
+        setUpdateInfo();
     }
 
     const close = () => {
 
-        setVisibleForm(false)
-        setVisibleFrecForm(false)
-        setUpdateInfo()
-
-        reset({
-            peso: null,
-            musculo: null,
-            marmoleo: null,
-        });
+        setVisibleForm(false);
+        setVisibleFrecForm(false);
+        setUpdateInfo();
+        cleaner1.reset(reset);
+        setLoading(true)
     }
+
     const logout = () => {
         localStorage.removeItem("home")
         navigate('/')
@@ -236,14 +177,11 @@ const Cows = ({ notice }) => {
                             <Cow
                                 key={cow?.id}
                                 cow={cow}
-                                setVisibleForm={setVisibleForm}
-                                setVisibleFrecForm={setVisibleFrecForm}
-                                visibleForm={visibleForm}
                                 setUpdateInfo={setUpdateInfo}
                                 deleteW={deleteW}
                                 update={update}
                                 notice={notice}
-                                addCowQuarantine={addCowQuarantine}
+                                clientApi={clientApi}
                             />
                         ))
                     }
@@ -258,14 +196,11 @@ const Cows = ({ notice }) => {
                             <CowQ
                                 key={cow?.id}
                                 cow={cow}
-                                setVisibleForm={setVisibleForm}
-                                setVisibleFrecForm={setVisibleFrecForm}
-                                visibleForm={visibleForm}
                                 setUpdateInfo={setUpdateInfo}
                                 deleteW={deleteW}
                                 update={update}
                                 notice={notice}
-                                deleteCowQuarantine={deleteCowQuarantine}
+                                clientApi={clientApi}
                             />
                         ))
                     }

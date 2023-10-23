@@ -2,27 +2,44 @@ import { useForm } from 'react-hook-form'
 import '../../styles/Layouts/LoginLayout.css'
 import useFetch from '../../hooks/useFetch'
 import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const LoginLayout = ({ notice }) => {
 
     const { register, reset, handleSubmit } = useForm()
 
-    const { loginUser, allCowsByDB, cows } = useFetch();
+    const { clientApi, cows } = useFetch();
+
+    const navigate = useNavigate()
 
     useEffect(() => {
-        allCowsByDB()
+      clientApi.allCowsByDB()
     }, [])
 
     const submit = async data => {
 
-        await loginUser(data);
-        notice('usuario logueado', 'green')
-        
+        try {
+            const response = await clientApi.loginUser(data)
+            if (response.data.username === data.username && response.data.password === data.password) {
+                localStorage.setItem('user', response.data.username);
+                localStorage.setItem('home', 'pass');
+                await navigate('/cows');
+            } else {
+                console.log('credenciales invalidas')
+                console.log(response)
+            }
+        } catch (error) {
+           console.log(error.message)
+        }
+
+        notice('usuario logueado', 'green');
+
         reset({
             username: '',
             password: '',
-        })
+        });
     }
+
 
     return (
 

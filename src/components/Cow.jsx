@@ -1,65 +1,13 @@
 import '../styles/cow.css';
-
-const Cow = ({ cow, notice, visibleForm, setVisibleForm, setVisibleFrecForm, setUpdateInfo, deleteW, update, addCowQuarantine }) => {
+import typesHealth from '../utils/typesHealth'
+const Cow = ({ cow, notice, setUpdateInfo, deleteW, update, clientApi}) => {
 
     const username = localStorage.getItem('user');
 
-    const tipos = (cow) => {
-
-        const peso = parseInt(cow?.peso);
-        const musculo = parseInt(cow?.musculo);
-        const marmoleo = parseInt(cow?.marmoleo);
-
-        if (
-            peso >= 15 &&
-            peso <= 25 &&
-            musculo >= 3 &&
-            musculo <= 5 &&
-            (marmoleo === 1 || marmoleo === 2)
-        ) {
-            return 1;
-        }
-        if (
-            (peso < 15 || peso > 25) ||
-            (musculo === 1 || musculo === 2 || musculo === 6 || musculo === 7) ||
-            (marmoleo === 3 || marmoleo === 4 || marmoleo === 5)
-        ) {
-            return 2;
-        }
-        return 'tipo indeterminado';
-    };
-
-    const salud = (cow) => {
-
-        const tempValue = parseFloat(cow?.temp) || 0;
-        const fcValue = parseInt(cow?.fc) || 0;
-        const frValue = parseInt(cow?.fr) || 0;
-        const fsValue = parseInt(cow?.fs) || 0;
-
-        if (
-            (tempValue >= 37.5 && tempValue <= 39.5) &&
-            (fcValue >= 70 && fcValue <= 80) &&
-            (frValue >= 15 && frValue <= 20) &&
-            (fsValue >= 8 && fsValue <= 10)
-        ) {
-            return { resultado: 'buena', isSpecial: false };
-        } else if (
-            (tempValue === 0 || fcValue === 0 || frValue === 0 || fsValue === 0)
-        ) {
-            return { resultado: 'indeterminada' };
-        } else if (
-            (tempValue < 37.5 || tempValue > 39.5) ||
-            (fcValue < 70 || fcValue > 80) ||
-            (frValue < 15 || frValue > 20) ||
-            (fsValue < 8 || fsValue > 10)
-        ) {
-            return { resultado: 'mala', isSpecial: true };
-        }
-    };
-
+    const typesH = new typesHealth()
+    
     const handleEdit = (id) => {
         if (username !== 'ayudante') {
-            setVisibleForm(!visibleForm);
             setUpdateInfo(id);
             update(id);
         } else {
@@ -69,7 +17,6 @@ const Cow = ({ cow, notice, visibleForm, setVisibleForm, setVisibleFrecForm, set
 
     const handleEditFrec = (id) => {
         if (username === 'ayudante') {
-            setVisibleFrecForm(true);
             setUpdateInfo(id);
             update(id);
         } else {
@@ -79,7 +26,7 @@ const Cow = ({ cow, notice, visibleForm, setVisibleForm, setVisibleFrecForm, set
 
     const handleAddQuarantine = async (cow) => {
         if(username != 'ayudante'){
-            await addCowQuarantine(cow)
+            await clientApi.addCowQuarantine(cow)
             notice('se agregó a cuarentena', 'green')
         }else{
             notice('Usuario no autorizado para esta acción')
@@ -107,11 +54,11 @@ const Cow = ({ cow, notice, visibleForm, setVisibleForm, setVisibleFrecForm, set
                 </li>
                 <li className='item__cow'>
                     <h4 className='title__item'>Tipo</h4>
-                    <span className='value__item'>{tipos(cow)}</span>
+                    <span className='value__item'>{typesH.tipos(cow)}</span>
                 </li>
-                <li className={`item__cow ${salud(cow).isSpecial ? 'sick' : ''}`}>
+                <li className={`item__cow ${typesH.salud(cow).isSpecial ? 'sick' : ''}`}>
                     <h4 className='id__title_S'>Salud</h4>
-                    <span className={`'value__item'  ${salud(cow).isSpecial ? 'sick__color' : ''}`}>{salud(cow).resultado}</span>
+                    <span className={`'value__item'  ${typesH.salud(cow).isSpecial ? 'sick__color' : ''}`}>{typesH.salud(cow).resultado}</span>
                 </li>
             </ul>
 
